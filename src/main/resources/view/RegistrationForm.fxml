@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="rootNode" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.ijse.controller.RegistrationFormController">
+   <children>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" height="782.0" layoutY="-11.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1371.0">
+         <fill>
+            <LinearGradient endX="0.5151515079267097" endY="1.0" startX="0.5265151438387958">
+               <stops>
+                  <Stop>
+                     <color>
+                        <Color red="0.9368420839309692" green="0.7841715216636658" blue="0.7460039258003235" />
+                     </color>
+                  </Stop>
+                  <Stop offset="1.0">
+                     <color>
+                        <Color red="0.6823529601097107" green="0.7215686440467834" blue="0.8196078538894653" />
+                     </color>
+                  </Stop>
+               </stops>
+            </LinearGradient>
+         </fill>
+      </Rectangle>
+      <ImageView blendMode="SCREEN" fitHeight="150.0" fitWidth="200.0" layoutX="9.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../assets.images/master-cut.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="612.0" fitWidth="698.0" layoutX="82.0" layoutY="80.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../assets.images/regpageimg2.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="859.0" layoutY="237.0" text="User ID">
+         <font>
+            <Font size="22.0" />
+         </font></Label>
+      <Label layoutX="859.0" layoutY="343.0" prefHeight="32.0" prefWidth="71.0" text="Name">
+         <font>
+            <Font size="22.0" />
+         </font></Label>
+      <Label layoutX="860.0" layoutY="451.0" text="Password">
+         <font>
+            <Font size="22.0" />
+         </font></Label>
+      <JFXButton buttonType="RAISED" layoutX="850.0" layoutY="590.0" onAction="#btnRegisterOnAction" prefHeight="50.0" prefWidth="370.0" style="-fx-background-color: #030303; -fx-background-radius: 10;" text="Register" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="22.0" />
+         </font>
+      </JFXButton>
+      <Label layoutX="949.0" layoutY="120.0" prefHeight="54.0" prefWidth="166.0" text="REGISTER">
+         <font>
+            <Font name="System Bold" size="36.0" />
+         </font>
+      </Label>
+      <Line endX="50.33331298828125" layoutX="1034.0" layoutY="174.0" startX="-58.466644287109375" strokeWidth="2.0" />
+      <JFXTextField fx:id="txtUserId" layoutX="851.0" layoutY="271.0" onKeyReleased="#txtUserIdCheckOnAction" prefHeight="46.0" prefWidth="370.0">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </JFXTextField>
+      <JFXTextField fx:id="txtUserName" layoutX="851.0" layoutY="377.0" onKeyReleased="#txtUserNameCheckOnAction" prefHeight="46.0" prefWidth="370.0">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </JFXTextField>
+      <JFXTextField fx:id="txtPassword" layoutX="851.0" layoutY="485.0" onKeyReleased="#txtPwCheckOnAciton" prefHeight="46.0" prefWidth="370.0">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </JFXTextField>
+   </children>
+</AnchorPane>

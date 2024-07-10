@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="root" prefHeight="768.0" prefWidth="1044.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.ijse.controller.ServiceFormController">
+   <children>
+      <Rectangle fill="#060116" height="768.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1044.0" />
+      <Label layoutX="33.0" layoutY="8.0" text="Manage Services" textFill="WHITE">
+         <font>
+            <Font size="36.0" />
+         </font>
+      </Label>
+      <Label layoutX="33.0" layoutY="91.0" text="Service ID *" textFill="WHITE">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Label>
+      <Label layoutX="292.0" layoutY="91.0" text="Description *" textFill="WHITE">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Label>
+      <Label layoutX="33.0" layoutY="224.0" text="Price *" textFill="WHITE">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Label>
+      <JFXButton graphicTextGap="14.0" layoutX="874.0" layoutY="359.0" onAction="#btnSaveOnAction" prefWidth="140.0" style="-fx-background-color: #591D87;" text="SAVE" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <graphic>
+            <ImageView fitHeight="20.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../assets.icons/save.png" />
+               </image>
+               <effect>
+                  <ColorAdjust brightness="1.0" />
+               </effect>
+            </ImageView>
+         </graphic>
+      </JFXButton>
+      <JFXButton graphicTextGap="14.0" layoutX="715.0" layoutY="359.0" onAction="#btnUpdateOnAction" prefWidth="140.0" style="-fx-background-color: #591D87;" text="UPDATE" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <graphic>
+            <ImageView fitHeight="20.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../assets.icons/settings.png" />
+               </image>
+               <effect>
+                  <ColorAdjust brightness="1.0" />
+               </effect>
+            </ImageView>
+         </graphic>
+      </JFXButton>
+      <JFXButton graphicTextGap="14.0" layoutX="552.0" layoutY="359.0" onAction="#btnDeleteOnAction" prefHeight="26.0" prefWidth="140.0" style="-fx-background-color: #591D87;" text="DELETE" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <graphic>
+            <ImageView fitHeight="20.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../assets.icons/remove.png" />
+               </image>
+               <effect>
+                  <ColorAdjust brightness="1.0" />
+               </effect>
+            </ImageView>
+         </graphic>
+      </JFXButton>
+      <JFXButton graphicTextGap="14.0" layoutX="389.0" layoutY="359.0" onAction="#btnClearOnAction" prefHeight="26.0" prefWidth="140.0" style="-fx-background-color: #591D87;" text="CLEAR" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <graphic>
+            <ImageView fitHeight="24.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../assets.icons/broom.png" />
+               </image>
+               <effect>
+                  <ColorAdjust brightness="1.0" />
+               </effect>
+            </ImageView>
+         </graphic>
+      </JFXButton>
+      <TableView fx:id="tblService" layoutX="32.0" layoutY="444.0" prefHeight="297.0" prefWidth="982.0">
+         <columns>
+            <TableColumn fx:id="colId" prefWidth="137.59997177124023" text="Service ID" />
+            <TableColumn fx:id="colDescription" prefWidth="322.40003967285156" text="Description" />
+            <TableColumn fx:id="colPrice" prefWidth="154.39996337890625" text="Price" />
+            <TableColumn fx:id="colEmpId" prefWidth="134.39996337890625" text="Emp ID" />
+            <TableColumn fx:id="colEmpName" prefWidth="214.39996337890625" text="Emp Name" />
+         </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+      <Line endX="904.0" endY="2.288818359375E-5" layoutX="140.0" layoutY="69.0" startX="-140.00001525878906" startY="2.288818359375E-5" stroke="#b7b7b7" />
+      <JFXComboBox fx:id="cmbEmpId" layoutX="229.0" layoutY="262.0" onAction="#cmbEmployeeOnAction" prefHeight="62.0" prefWidth="143.0" style="-fx-background-color: #ffffff;" />
+      <Label layoutX="229.0" layoutY="224.0" text="Employee ID *" textFill="WHITE">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Label>
+      <Label layoutX="430.0" layoutY="224.0" text="Employee Name" textFill="WHITE">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblEmpName" layoutX="430.0" layoutY="273.0" prefHeight="40.0" prefWidth="302.0" textFill="WHITE">
+         <font>
+            <Font size="28.0" />
+         </font>
+      </Label>
+      <JFXTextField fx:id="txtId" layoutX="32.0" layoutY="130.0" onAction="#txtSearchOnAction" onKeyReleased="#txtIdCheckOnAction" prefHeight="59.0" prefWidth="196.0" style="-fx-text-fill: white;">
+         <font>
+            <Font size="28.0" />
+         </font>
+      </JFXTextField>
+      <JFXTextField fx:id="txtDescription" layoutX="291.0" layoutY="130.0" onKeyReleased="#txtDescCheckOnAction" prefHeight="59.0" prefWidth="718.0" style="-fx-text-fill: white;">
+         <font>
+            <Font size="28.0" />
+         </font>
+      </JFXTextField>
+      <JFXTextField fx:id="txtPrice" layoutX="33.0" layoutY="263.0" onKeyReleased="#txtPriceCheckOnAction" prefHeight="59.0" prefWidth="134.0" style="-fx-text-fill: white;">
+         <font>
+            <Font size="28.0" />
+         </font>
+      </JFXTextField>
+      <JFXTextField layoutX="430.0" layoutY="263.0" prefHeight="59.0" prefWidth="244.0">
+         <font>
+            <Font size="28.0" />
+         </font>
+      </JFXTextField>
+   </children>
+</AnchorPane>
