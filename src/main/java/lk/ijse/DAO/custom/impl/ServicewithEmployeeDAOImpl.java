@@ -1,7 +1,8 @@
 package lk.ijse.DAO.custom.impl;
 
-import lk.ijse.smcmanagesuite.db.DbConnection;
-import lk.ijse.smcmanagesuite.model.ServicewithEmployee;
+import lk.ijse.DAO.SqlUtil;
+import lk.ijse.DAO.custom.ServiceWithEmployeeDAO;
+import lk.ijse.entity.*;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,15 +10,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServicewithEmployeeDAOImpl {
-
-    public static List<ServicewithEmployee> getAll() throws SQLException {
-        String sql = "SELECT s.*, e.Name FROM Service s INNER JOIN Employee e ON s.Emp_Id = e.Emp_Id;";
-
-        PreparedStatement pstm = DbConnection.getInstance().getConnection()
-                .prepareStatement(sql);
-
-        ResultSet resultSet = pstm.executeQuery();
+public class ServicewithEmployeeDAOImpl implements ServiceWithEmployeeDAO {
+    public List<ServicewithEmployee> getAll() throws SQLException, ClassNotFoundException {
+        ResultSet resultSet = SqlUtil.execute("SELECT s.*, e.Name FROM Service s INNER JOIN Employee e ON s.Emp_Id = e.Emp_Id;");
 
         List<ServicewithEmployee> servicewithEmployeeList = new ArrayList<>();
         while (resultSet.next()) {
@@ -33,13 +28,8 @@ public class ServicewithEmployeeDAOImpl {
         return servicewithEmployeeList;
     }
 
-    public static ServicewithEmployee searchById(String id) throws SQLException {
-        String sql = "SELECT s.*, e.Name FROM Service s INNER JOIN Employee e ON s.Emp_Id = e.Emp_Id WHERE S_Id = ?";
-        PreparedStatement pstm = DbConnection.getInstance().getConnection()
-                .prepareStatement(sql);
-
-        pstm.setObject(1, id);
-        ResultSet resultSet = pstm.executeQuery();
+    public ServicewithEmployee searchById(String id) throws SQLException, ClassNotFoundException {
+        ResultSet resultSet = SqlUtil.execute("SELECT s.*, e.Name FROM Service s INNER JOIN Employee e ON s.Emp_Id = e.Emp_Id WHERE S_Id = ?");
 
         ServicewithEmployee servicewithEmployee = null;
 

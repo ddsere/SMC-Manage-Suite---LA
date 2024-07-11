@@ -18,7 +18,7 @@ public class ServiceDetailDAOImpl implements ServiceDetailDAO {
             return true;
     }
 
-    public boolean save( ServiceIds od, Order order) throws SQLException, ClassNotFoundException {
+    public boolean save(ServiceIds od, Order order) throws SQLException, ClassNotFoundException {
             return SqlUtil.execute("INSERT INTO service_orders VALUES(?, ?)",
                     od.getId(),
                     order.getOrderId()

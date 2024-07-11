@@ -55,13 +55,14 @@ public class ItemBOImpl implements ItemBO {
         return itemDAO.getCodes();
     }
 
-    public boolean updateQty(List<ItemQty> itemQties) throws SQLException, ClassNotFoundException {
-        for (ItemQty od : itemQties) {
-            if(!updateQty(od)) {
-                return false;
-            }
-        }
-        return true;
+    public boolean updateQty(List<ItemQtyDTO> itemQties) throws SQLException, ClassNotFoundException {
+        List<ItemQty> itemQtyList = new ArrayList<>(
+                itemQties.stream().map(itq -> new ItemQty(
+                        itq.getQty(),
+                        itq.getItemCode()
+                )).toList()
+        );
+        return itemDAO.updateQty(itemQtyList);
     }
     public boolean updateQty(ItemQtyDTO dto) throws SQLException, ClassNotFoundException {
         return itemDAO.updateQty(new ItemQty(

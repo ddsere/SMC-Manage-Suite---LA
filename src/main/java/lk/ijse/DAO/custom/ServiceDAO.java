@@ -1,7 +1,9 @@
 package lk.ijse.DAO.custom;
 
 import lk.ijse.DAO.SqlUtil;
+import lk.ijse.entity.Order;
 import lk.ijse.entity.Service;
+import lk.ijse.entity.ServiceIds;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

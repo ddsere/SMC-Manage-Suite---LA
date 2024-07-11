@@ -1,12 +1,13 @@
 package lk.ijse.bo.custom;
 
+import lk.ijse.bo.SuperBO;
 import lk.ijse.dto.ServiceDTO;
 import lk.ijse.entity.Service;
 
 import java.sql.SQLException;
 import java.util.List;
 
-public interface ServiceBO {
+public interface ServiceBO extends SuperBO {
     public boolean delete(String id) throws SQLException, ClassNotFoundException;
     public boolean save(ServiceDTO dto) throws SQLException, ClassNotFoundException;
     public boolean update(ServiceDTO dto) throws SQLException, ClassNotFoundException;

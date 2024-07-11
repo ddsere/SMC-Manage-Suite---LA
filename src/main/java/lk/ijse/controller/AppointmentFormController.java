@@ -9,6 +9,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
+import lk.ijse.bo.BOFactory;
+import lk.ijse.bo.custom.AppointmentBO;
 import lk.ijse.entity.*;
 import lk.ijse.util.Regex;
 import lk.ijse.util.TextFields;
@@ -71,6 +73,8 @@ public class AppointmentFormController {
     private DatePicker txtDate;
 
     private List<AppointmentDetails> appointmentList = new ArrayList<>();
+
+    AppointmentBO appointmentBO = (AppointmentBO) BOFactory.getBoFactory().getBO(BOFactory.BOType.)
     private double price;
 
     public void initialize() {
