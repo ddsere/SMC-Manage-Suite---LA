@@ -3,9 +3,13 @@ package lk.ijse.controller;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import lk.ijse.smcmanagesuite.repository.AppointmentRepo;
-import lk.ijse.smcmanagesuite.repository.CustomerRepo;
-import lk.ijse.smcmanagesuite.repository.OrderRepo;
+import lk.ijse.DAO.custom.AppointmentDAO;
+import lk.ijse.DAO.custom.CustomerDAO;
+import lk.ijse.DAO.custom.OrderDAO;
+import lk.ijse.bo.BOFactory;
+import lk.ijse.bo.custom.AppointmentBO;
+import lk.ijse.bo.custom.CustomerBO;
+import lk.ijse.bo.custom.OrderBO;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -35,6 +39,10 @@ public class DashboardFormController {
 
     private volatile boolean stop = false;
 
+    AppointmentBO appointmentBO = (AppointmentBO) BOFactory.getBoFactory().getBO(BOFactory.BOType.APPOINTMENT);
+    OrderBO orderBO = (OrderBO) BOFactory.getBoFactory().getBO(BOFactory.BOType.ORDER);
+    CustomerBO customerBO = (CustomerBO) BOFactory.getBoFactory().getBO(BOFactory.BOType.CUSTOMER);
+
     public void initialize(){
         timeNow();
 
@@ -44,9 +52,9 @@ public class DashboardFormController {
         lblDate.setText(formattedDate);
 
         try {
-            appCount = AppointmentRepo.getAppCount();
-            salesCount = OrderRepo.getOrderCount();
-            cusCount = CustomerRepo.getCusCount();
+            appCount = appointmentBO.getAppCount();
+            salesCount = orderBO.getOrderCount();
+            cusCount = customerBO.getCusCount();
         }catch (Exception e){
             throw new RuntimeException(e);
         }

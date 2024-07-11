@@ -13,11 +13,16 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-import lk.ijse.smcmanagesuite.model.*;
-import lk.ijse.smcmanagesuite.model.tm.ServicewithEmployeeTm;
-import lk.ijse.smcmanagesuite.repository.*;
-import lk.ijse.smcmanagesuite.util.Regex;
-import lk.ijse.smcmanagesuite.util.TextFields;
+import lk.ijse.bo.BOFactory;
+import lk.ijse.bo.custom.EmployeeBO;
+import lk.ijse.bo.custom.ServiceBO;
+import lk.ijse.bo.custom.ServiceWithEmployeeBO;
+import lk.ijse.dto.EmployeeDTO;
+import lk.ijse.dto.ServiceDTO;
+import lk.ijse.dto.ServicewithEmployeeDTO;
+import lk.ijse.dto.ServicewithEmployeeTmDTO;
+import lk.ijse.util.Regex;
+import lk.ijse.util.TextFields;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -50,7 +55,7 @@ public class ServiceFormController {
     private AnchorPane root;
 
     @FXML
-    private TableView<ServicewithEmployeeTm> tblService;
+    private TableView<ServicewithEmployeeTmDTO> tblService;
 
     @FXML
     private JFXTextField txtDescription;
@@ -61,7 +66,10 @@ public class ServiceFormController {
     @FXML
     private JFXTextField txtPrice;
 
-    private List<ServicewithEmployee> servicewithEmployeeList = new ArrayList<>();
+    private List<ServicewithEmployeeDTO> servicewithEmployeeList = new ArrayList<>();
+    ServiceWithEmployeeBO serviceWithEmployeeBO = (ServiceWithEmployeeBO) BOFactory.getBoFactory().getBO(BOFactory.BOType.SERVICE_WITH_EMPLOYEE);
+    EmployeeBO employeeBO = (EmployeeBO) BOFactory.getBoFactory().getBO(BOFactory.BOType.EMPLOYEE);
+    ServiceBO serviceBO = (ServiceBO) BOFactory.getBoFactory().getBO(BOFactory.BOType.SERVICE);
 
     public void initialize() {
         this.servicewithEmployeeList = getAllItems();
@@ -70,11 +78,11 @@ public class ServiceFormController {
         getEmpIds();
     }
 
-    private List<ServicewithEmployee> getAllItems() {
-        List<ServicewithEmployee> servicewithEmployeeList = null;
+    private List<ServicewithEmployeeDTO> getAllItems() {
+        List<ServicewithEmployeeDTO> servicewithEmployeeList = null;
         try {
-            servicewithEmployeeList = ServicewithEmployeeRepo.getAll();
-        } catch (SQLException e) {
+            servicewithEmployeeList = serviceWithEmployeeBO.getAll();
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         return servicewithEmployeeList;
@@ -89,10 +97,10 @@ public class ServiceFormController {
     }
 
     private void loadServiceTable() {
-        ObservableList<ServicewithEmployeeTm> tmList = FXCollections.observableArrayList();
+        ObservableList<ServicewithEmployeeTmDTO> tmList = FXCollections.observableArrayList();
 
-        for (ServicewithEmployee servicewithEmployee : servicewithEmployeeList) {
-            ServicewithEmployeeTm servicewithEmployeeTm = new ServicewithEmployeeTm(
+        for (ServicewithEmployeeDTO servicewithEmployee : servicewithEmployeeList) {
+            ServicewithEmployeeTmDTO servicewithEmployeeTm = new ServicewithEmployeeTmDTO(
                     servicewithEmployee.getServiceId(),
                     servicewithEmployee.getDescription(),
                     servicewithEmployee.getPrice(),
@@ -103,21 +111,19 @@ public class ServiceFormController {
             tmList.add(servicewithEmployeeTm);
         }
         tblService.setItems(tmList);
-        ServicewithEmployeeTm selectedItem = (ServicewithEmployeeTm) tblService.getSelectionModel().getSelectedItem();
-        //System.out.println("selectedItem = " + selectedItem);
     }
 
     private void getEmpIds() {
         ObservableList<String> obList = FXCollections.observableArrayList();
         try {
-            List<String> idList = EmployeeRepo.getCodes();
+            List<String> idList = employeeBO.getCodes();
             for (String id : idList) {
                 obList.add(id);
             }
 
             cmbEmpId.setItems(obList);
 
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -140,11 +146,11 @@ public class ServiceFormController {
         String id = txtId.getText();
 
         try {
-            boolean isDeleted = ServiceRepo.delete(id);
+            boolean isDeleted = serviceBO.delete(id);
             if (isDeleted) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Service Deleted!").show();
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
         }
         clearFields();
@@ -159,14 +165,14 @@ public class ServiceFormController {
             String price = txtPrice.getText();
             String empId = cmbEmpId.getValue();
 
-            Service service = new Service(id, description, price, empId);
+            ServiceDTO service = new ServiceDTO(id, description, price, empId);
 
             try {
-                boolean isSaved = ServiceRepo.save(service);
+                boolean isSaved = serviceBO.save(service);
                 if (isSaved) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Service Saved!").show();
                 }
-            } catch (SQLException e) {
+            } catch (SQLException | ClassNotFoundException e) {
                 new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
             }
             initialize();
@@ -181,14 +187,14 @@ public class ServiceFormController {
             String price = txtPrice.getText();
             String empId = cmbEmpId.getValue();
 
-            Service service = new Service(id, description, price, empId);
+            ServiceDTO service = new ServiceDTO(id, description, price, empId);
 
             try {
-                boolean isUpdated = ServiceRepo.update(service);
+                boolean isUpdated = serviceBO.update(service);
                 if (isUpdated) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Service Updated!").show();
                 }
-            } catch (SQLException e) {
+            } catch (SQLException | ClassNotFoundException e) {
                 System.out.println(e);
                 new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
             }
@@ -201,11 +207,11 @@ public class ServiceFormController {
         String empId = cmbEmpId.getValue();
 
         try {
-            Employee employee = EmployeeRepo.searchById(empId);
+            EmployeeDTO employee = employeeBO.searchById(empId);
             if (employee != null) {
                 lblEmpName.setText(employee.getName());
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -215,7 +221,7 @@ public class ServiceFormController {
         String id = txtId.getText();
 
         try {
-            ServicewithEmployee servicewithEmployee = ServicewithEmployeeRepo.searchById(id);
+            ServicewithEmployeeDTO servicewithEmployee = serviceWithEmployeeBO.searchById(id);
 
             if (servicewithEmployee != null) {
                 txtId.setText(servicewithEmployee.getServiceId());
@@ -226,7 +232,7 @@ public class ServiceFormController {
                 String sId = servicewithEmployee.getEmpId();
                 cmbEmpId.setValue(sId);
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
         }
     }

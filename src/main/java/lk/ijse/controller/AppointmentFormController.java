@@ -10,7 +10,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import lk.ijse.bo.BOFactory;
-import lk.ijse.bo.custom.AppointmentBO;
+import lk.ijse.bo.custom.*;
+import lk.ijse.dto.*;
 import lk.ijse.entity.*;
 import lk.ijse.util.Regex;
 import lk.ijse.util.TextFields;
@@ -61,7 +62,7 @@ public class AppointmentFormController {
     private Label lblServiceName;
 
     @FXML
-    private TableView<AppointmentTm> tblAppointment;
+    private TableView<AppointmentTmDTO> tblAppointment;
 
     @FXML
     private JFXTextField txtAppId;
@@ -72,9 +73,14 @@ public class AppointmentFormController {
     @FXML
     private DatePicker txtDate;
 
-    private List<AppointmentDetails> appointmentList = new ArrayList<>();
-
-    AppointmentBO appointmentBO = (AppointmentBO) BOFactory.getBoFactory().getBO(BOFactory.BOType.)
+    private List<AppointmentDetailsDTO> appointmentList = new ArrayList<>();
+    AppointmentBO appointmentBO = (AppointmentBO) BOFactory.getBoFactory().getBO(BOFactory.BOType.APPOINTMENT);
+    AppointmentDetailsBO appointmentDetailsBO = (AppointmentDetailsBO) BOFactory.getBoFactory().getBO(BOFactory.BOType.APPOINTMENT_DETAIL);
+    EmployeeBO employeeBO = (EmployeeBO) BOFactory.getBoFactory().getBO(BOFactory.BOType.EMPLOYEE);
+    ServiceBO serviceBO = (ServiceBO) BOFactory.getBoFactory().getBO(BOFactory.BOType.SERVICE);
+    ChangeAppointmentBO changeAppointmentBO = (ChangeAppointmentBO) BOFactory.getBoFactory().getBO(BOFactory.BOType.CHANGE_APPOINTMENT);
+    OrderBO orderBO = (OrderBO) BOFactory.getBoFactory().getBO(BOFactory.BOType.ORDER);
+    CustomerBO customerBO = (CustomerBO) BOFactory.getBoFactory().getBO(BOFactory.BOType.CUSTOMER);
     private double price;
 
     public void initialize() {
@@ -87,11 +93,11 @@ public class AppointmentFormController {
     }
 
 
-    private List<AppointmentDetails> getAllItems() {
-        List<AppointmentDetails> appointmentList = null;
+    private List<AppointmentDetailsDTO> getAllItems() {
+        List<AppointmentDetailsDTO> appointmentList = null;
         try {
-            appointmentList = AppointmentDetailsRepo.getAll();
-        } catch (SQLException e) {
+            appointmentList = appointmentDetailsBO.getAll();
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         return appointmentList;
@@ -107,10 +113,10 @@ public class AppointmentFormController {
     }
 
     private void loadAppTable() {
-        ObservableList<AppointmentTm> tmList = FXCollections.observableArrayList();
+        ObservableList<AppointmentTmDTO> tmList = FXCollections.observableArrayList();
 
-        for (AppointmentDetails appointmentDetails : appointmentList) {
-            AppointmentTm appointmentTm = new AppointmentTm(
+        for (AppointmentDetailsDTO appointmentDetails : appointmentList) {
+            AppointmentTmDTO appointmentTmDTO = new AppointmentTmDTO(
                     appointmentDetails.getAppId(),
                     appointmentDetails.getCusName(),
                     appointmentDetails.getSName(),
@@ -118,7 +124,7 @@ public class AppointmentFormController {
                     appointmentDetails.getTimeSlot(),
                     appointmentDetails.getEmpName()
             );
-            tmList.add(appointmentTm);
+            tmList.add(appointmentTmDTO);
         }
         tblAppointment.setItems(tmList);
     }
@@ -143,14 +149,14 @@ public class AppointmentFormController {
     private void getEmployeeId() {
         ObservableList<String> obList = FXCollections.observableArrayList();
         try {
-            List<String> idList = EmployeeRepo.getCodes();
+            List<String> idList = employeeBO.getCodes();
             for (String id : idList) {
                 obList.add(id);
             }
 
             cmbEmpId.setItems(obList);
 
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -158,14 +164,14 @@ public class AppointmentFormController {
     private void getServiceId() {
         ObservableList<String> obList = FXCollections.observableArrayList();
         try {
-            List<String> idList = ServiceRepo.getIds();
+            List<String> idList = serviceBO.getIds();
             for (String id : idList) {
                 obList.add(id);
             }
 
             cmbServId.setItems(obList);
 
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -199,20 +205,19 @@ public class AppointmentFormController {
 
 
             try {
-                price = ServiceRepo.getPrice(servId);
-            } catch (SQLException e) {
+                price = serviceBO.getPrice(servId);
+            } catch (SQLException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
 
-            Appointment appointment = new Appointment(appId, date, cusPhone, servId, empId, ts, price);
-            System.out.println(appointment.toString());
+            AppointmentDTO appointment = new AppointmentDTO(appId, date, cusPhone, servId, empId, ts, price);
 
             try {
-                boolean isSaved = AppointmentRepo.save(appointment);
+                boolean isSaved = appointmentBO.save(appointment);
                 if (isSaved) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Appointment Saved!").show();
                 }
-            } catch (SQLException e) {
+            } catch (SQLException | ClassNotFoundException e) {
                 new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
             }
             initialize();
@@ -224,11 +229,11 @@ public class AppointmentFormController {
         String id = txtAppId.getText();
 
         try {
-            boolean isDeleted = AppointmentRepo.delete(id);
+            boolean isDeleted = appointmentBO.delete(id);
             if (isDeleted) {
                 new Alert(Alert.AlertType.CONFIRMATION, "A Deleted!").show();
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
         }
         clearFields();
@@ -245,14 +250,14 @@ public class AppointmentFormController {
             String empId = cmbEmpId.getValue();
             String ts = cmbTimeSlot.getValue();
 
-            Appointment appointment = new Appointment(appId, date, cusPhone, servId, empId, ts, price);
+            AppointmentDTO appointment = new AppointmentDTO(appId, date, cusPhone, servId, empId, ts, price);
 
             try {
-                boolean isUpdated = AppointmentRepo.update(appointment);
+                boolean isUpdated = appointmentBO.update(appointment);
                 if (isUpdated) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Appointment Updated!").show();
                 }
-            } catch (SQLException e) {
+            } catch (SQLException | ClassNotFoundException e) {
                 new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
             }
             initialize();
@@ -266,8 +271,8 @@ public class AppointmentFormController {
             double price;
 
             try {
-                price = ServiceRepo.getPrice(servId);
-            } catch (SQLException e) {
+                price = serviceBO.getPrice(servId);
+            } catch (SQLException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
 
@@ -276,15 +281,15 @@ public class AppointmentFormController {
             Date date = Date.valueOf(LocalDate.now());
 
             String orderId = loadNextOrderId();
-            var order = new Order(orderId, date, price, cusPhone, cusName);
+            var order = new OrderDTO(orderId, date, price, cusPhone, cusName);
 
             String status = "Completed";
-            AppointmentStatus appointmentStatus = new AppointmentStatus(status, appId);
+            AppointmentStatusDTO appointmentStatus = new AppointmentStatusDTO(status, appId);
 
-            ChangeAppointment po = new ChangeAppointment(order, appointmentStatus);
+            ChangeAppointmentDTO po = new ChangeAppointmentDTO(order, appointmentStatus);
             System.out.println(po.toString());
             try {
-                boolean isPlaced = ChangeAppointmentRepo.changeAppointment(po);
+                boolean isPlaced = changeAppointmentBO.changeAppointment(po);
                 System.out.println(isPlaced);
                 if (isPlaced) {
                     new Alert(Alert.AlertType.CONFIRMATION, "order placed!").show();
@@ -299,12 +304,12 @@ public class AppointmentFormController {
 
     private String loadNextOrderId() {
         try {
-            String currentId = OrderRepo.currentId();
+            String currentId = orderBO.currentId();
             String nextId = nextId(currentId);
 
             String orderId = (nextId);
             return orderId;
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -327,11 +332,11 @@ public class AppointmentFormController {
         String empId = cmbEmpId.getValue();
 
         try {
-            Employee employee = EmployeeRepo.searchById(empId);
+            EmployeeDTO employee = employeeBO.searchById(empId);
             if (employee != null) {
                 lblEmpName.setText(employee.getName());
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -341,11 +346,11 @@ public class AppointmentFormController {
         String sId = cmbServId.getValue();
 
         try {
-            Service service = ServiceRepo.searchById(sId);
+            ServiceDTO service = serviceBO.searchById(sId);
             if (service != null) {
                 lblServiceName.setText(service.getDescription());
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -354,16 +359,16 @@ public class AppointmentFormController {
         String cusPhone = txtCusPhone.getText();
 
         try {
-            Customer customer = CustomerRepo.searchById(cusPhone);
+            CustomerDTO customer = customerBO.searchById(cusPhone);
             if (customer != null) {
                 lblCusName.setText(customer.getName());
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
 
         try {
-            AppointmentSearch appointmentSearch = AppointmentDetailsRepo.searchById(cusPhone);
+            AppointmentSearchDTO appointmentSearch = appointmentDetailsBO.searchById(cusPhone);
 
             if (appointmentSearch != null) {
                 txtAppId.setText(appointmentSearch.getAppId());
@@ -376,7 +381,7 @@ public class AppointmentFormController {
                 lblServiceName.setText(appointmentSearch.getSName());
 
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
         }
     }

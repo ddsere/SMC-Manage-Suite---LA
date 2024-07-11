@@ -77,8 +77,6 @@ public class CustomerFormController {
             tmList.add(customerTmDTO);
         }
         tblCustomer.setItems(tmList);
-        CustomerTmDTO selectedItem = (CustomerTmDTO) tblCustomer.getSelectionModel().getSelectedItem();
-        //System.out.println("selectedItem = " + selectedItem);
     }
 
     private List<CustomerDTO> getAllCustomers() {

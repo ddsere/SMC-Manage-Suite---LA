@@ -29,7 +29,8 @@ public class ServiceDetailBOImpl implements ServiceDetailBO {
     }
 
     public boolean save(ServiceIdsDTO serviceIdsDTO, OrderDTO orderDTO) throws SQLException, ClassNotFoundException {
-        ServiceIds serviceIds = new ServiceIds(serviceIdsDTO.getId());
+        ServiceIds serviceIds = new ServiceIds(
+                serviceIdsDTO.getId());
         Order order = new Order(
                 orderDTO.getOrderId(),
                 orderDTO.getDate(),

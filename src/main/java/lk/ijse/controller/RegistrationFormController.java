@@ -5,9 +5,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.input.KeyEvent;
-import lk.ijse.smcmanagesuite.db.DbConnection;
-import lk.ijse.smcmanagesuite.util.Regex;
-import lk.ijse.smcmanagesuite.util.TextFields;
+import lk.ijse.db.DbConnection;
+import lk.ijse.util.Regex;
+import lk.ijse.util.TextFields;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

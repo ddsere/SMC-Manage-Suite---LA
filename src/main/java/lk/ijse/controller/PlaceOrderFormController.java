@@ -12,13 +12,14 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-import lk.ijse.smcmanagesuite.db.DbConnection;
-import lk.ijse.smcmanagesuite.model.*;
-import lk.ijse.smcmanagesuite.model.tm.ItemCartTm;
-import lk.ijse.smcmanagesuite.model.tm.ServiceCartTm;
-import lk.ijse.smcmanagesuite.repository.*;
-import lk.ijse.smcmanagesuite.util.Regex;
-import lk.ijse.smcmanagesuite.util.TextFields;
+import lk.ijse.bo.BOFactory;
+import lk.ijse.bo.custom.*;
+import lk.ijse.db.DbConnection;
+import lk.ijse.dto.*;
+import lk.ijse.entity.*;
+import lk.ijse.util.Regex;
+import lk.ijse.util.TextFields;
+import lk.ijse.veiw.tdm.*;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.design.JRDesignQuery;
 import net.sf.jasperreports.engine.design.JasperDesign;
@@ -116,6 +117,11 @@ public class PlaceOrderFormController {
     private ObservableList<ServiceCartTm> serviceCartList = FXCollections.observableArrayList();
     private double netTotal = 0;
     private String cusPhone ;
+    ItemBO itemBO = (ItemBO) BOFactory.getBoFactory().getBO(BOFactory.BOType.ITEM);
+    ServiceBO serviceBO = (ServiceBO) BOFactory.getBoFactory().getBO(BOFactory.BOType.SERVICE);
+    OrderBO orderBO = (OrderBO) BOFactory.getBoFactory().getBO(BOFactory.BOType.ORDER);
+    PlaceOrderBO placeOrderBO = (PlaceOrderBO) BOFactory.getBoFactory().getBO(BOFactory.BOType.PLACE_ORDER);
+    CustomerBO customerBO = (CustomerBO) BOFactory.getBoFactory().getBO(BOFactory.BOType.CUSTOMER);
 
     public void initialize() {
         setCellValueFactory();
@@ -128,14 +134,14 @@ public class PlaceOrderFormController {
     private void getItemId() {
         ObservableList<String> obList = FXCollections.observableArrayList();
         try {
-            List<String> idList = ItemRepo.getCodes();
+            List<String> idList = itemBO.getCodes();
             for (String id : idList) {
                 obList.add(id);
             }
 
             cmbItemId.setItems(obList);
 
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -143,14 +149,14 @@ public class PlaceOrderFormController {
     private void getServiceId() {
         ObservableList<String> obList = FXCollections.observableArrayList();
         try {
-            List<String> idList = ServiceRepo.getIds();
+            List<String> idList = serviceBO.getIds();
             for (String id : idList) {
                 obList.add(id);
             }
 
             cmbSId.setItems(obList);
 
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -162,11 +168,11 @@ public class PlaceOrderFormController {
 
     private void loadNextOrderId() {
         try {
-            String currentId = OrderRepo.currentId();
+            String currentId = orderBO.currentId();
             String nextId = nextId(currentId);
 
             lblOrderID.setText(nextId);
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -309,34 +315,32 @@ public class PlaceOrderFormController {
             double total = Double.parseDouble(lblNetTotal.getText());
 
 
-            var order = new Order(orderId, date, total, cusPhone, cusName);
+            var order = new OrderDTO(orderId, date, total, cusPhone, cusName);
 
-            System.out.println(order.toString());
-
-            List<ItemQty> itemQties = new ArrayList<>();
+            List<ItemQtyDTO> itemQties = new ArrayList<>();
             for (int i = 0; i < tblCartItem.getItems().size(); i++) {
                 ItemCartTm tm = itemCartList.get(i);
 
-                ItemQty od = new ItemQty(
+                ItemQtyDTO od = new ItemQtyDTO(
                         tm.getItemQty(),
                         tm.getItemId()
                 );
                 itemQties.add(od);
             }
 
-            List<ServiceIds> serviceIds = new ArrayList<>();
+            List<ServiceIdsDTO> serviceIds = new ArrayList<>();
             for (int i = 0; i < tblCartService.getItems().size(); i++) {
                 ServiceCartTm tm = serviceCartList.get(i);
 
-                ServiceIds si = new ServiceIds(
+                ServiceIdsDTO si = new ServiceIdsDTO(
                         tm.getSId()
                 );
                 serviceIds.add(si);
             }
 
-            PlaceOrder po = new PlaceOrder(order, itemQties, serviceIds);
+            PlaceOrderDTO po = new PlaceOrderDTO(order, itemQties, serviceIds);
             try {
-                boolean isPlaced = PlaceOrderRepo.placeOrder(po);
+                boolean isPlaced = placeOrderBO.placeOrder(po);
                 System.out.println(isPlaced);
                 if (isPlaced) {
                     new Alert(Alert.AlertType.CONFIRMATION, "order placed!").show();
@@ -394,13 +398,13 @@ public class PlaceOrderFormController {
         String empId = cmbItemId.getValue();
 
         try {
-            Item item = ItemRepo.searchById(empId);
+            ItemDTO item = itemBO.searchById(empId);
             if (item != null) {
                 lblItemName.setText(item.getDescription());
                 lblItemQtyOnHand.setText(item.getQty());
                 lblItemUnitPrice.setText(String.valueOf(item.getPrice()));
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -410,12 +414,12 @@ public class PlaceOrderFormController {
         String serviceId = cmbSId.getValue();
 
         try {
-            Service service = ServiceRepo.searchById(serviceId);
+            ServiceDTO service = serviceBO.searchById(serviceId);
             if (service != null) {
                 lblSName.setText(service.getDescription());
                 lblSPrice.setText(service.getPrice());
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -425,11 +429,11 @@ public class PlaceOrderFormController {
         cusPhone = txtCusPhone.getText();
 
         try {
-            Customer customer = CustomerRepo.searchById(cusPhone);
+            CustomerDTO customer = customerBO.searchById(cusPhone);
             if (customer != null) {
                 lblCusName.setText(customer.getName());
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }

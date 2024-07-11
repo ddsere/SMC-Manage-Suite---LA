@@ -13,9 +13,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import lk.ijse.smcmanagesuite.db.DbConnection;
-import lk.ijse.smcmanagesuite.util.Regex;
-import lk.ijse.smcmanagesuite.util.TextFields;
+import lk.ijse.db.DbConnection;
+import lk.ijse.util.Regex;
+import lk.ijse.util.TextFields;
 
 import java.io.IOException;
 import java.sql.Connection;

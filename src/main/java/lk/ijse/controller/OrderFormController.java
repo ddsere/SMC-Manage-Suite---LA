@@ -7,9 +7,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import lk.ijse.smcmanagesuite.model.Order;
-import lk.ijse.smcmanagesuite.model.tm.OrderTm;
-import lk.ijse.smcmanagesuite.repository.OrderRepo;
+import lk.ijse.bo.BOFactory;
+import lk.ijse.bo.custom.OrderBO;
+import lk.ijse.dto.OrderDTO;
+import lk.ijse.dto.OrderTmDTO;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -36,9 +37,10 @@ public class OrderFormController {
     private AnchorPane root;
 
     @FXML
-    private TableView<OrderTm> tblOrder;
+    private TableView<OrderTmDTO> tblOrder;
 
-    private List<Order> orderList = new ArrayList<>();
+    private List<OrderDTO> orderList = new ArrayList<>();
+    OrderBO orderBO = (OrderBO) BOFactory.getBoFactory().getBO(BOFactory.BOType.ORDER);
 
     public void initialize() {
         this.orderList = getAllOrders();
@@ -46,11 +48,11 @@ public class OrderFormController {
         loadOrderTable();
     }
 
-    private List<Order> getAllOrders() {
-        List<Order> orderList = null;
+    private List<OrderDTO> getAllOrders() {
+        List<OrderDTO> orderList = null;
         try {
-            orderList = OrderRepo.getAll();
-        } catch (SQLException e) {
+            orderList = orderBO.getAll();
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         return orderList;
@@ -65,10 +67,10 @@ public class OrderFormController {
     }
 
     private void loadOrderTable() {
-        ObservableList<OrderTm> tmList = FXCollections.observableArrayList();
+        ObservableList<OrderTmDTO> tmList = FXCollections.observableArrayList();
 
-        for (Order order : orderList) {
-            OrderTm orderTm = new OrderTm(
+        for (OrderDTO order : orderList) {
+            OrderTmDTO orderTm = new OrderTmDTO(
                     order.getOrderId(),
                     order.getDate(),
                     order.getCusName(),

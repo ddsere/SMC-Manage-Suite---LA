@@ -1,13 +1,14 @@
 package lk.ijse.DAO.custom.impl;
 
 import lk.ijse.DAO.SqlUtil;
+import lk.ijse.DAO.custom.ItemDetailDAO;
 import lk.ijse.entity.*;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-public class ItemDetailDAOImpl {
+public class ItemDetailDAOImpl implements ItemDetailDAO {
     public boolean save(List<ItemQty> itemQties , Order entity) throws SQLException, ClassNotFoundException {
         for (ItemQty od : itemQties) {
             if(!save(od,entity)) {

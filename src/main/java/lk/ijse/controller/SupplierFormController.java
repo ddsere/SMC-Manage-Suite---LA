@@ -11,9 +11,11 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import lk.ijse.bo.BOFactory;
+import lk.ijse.bo.custom.SupplierBO;
+import lk.ijse.dto.SupplierDTO;
+import lk.ijse.dto.SupplierTmDTO;
 import lk.ijse.entity.*;
-import lk.ijse.smcmanagesuite.model.tm.SupplierTm;
-import lk.ijse.smcmanagesuite.repository.SupplierRepo;
 import lk.ijse.util.Regex;
 import lk.ijse.util.TextFields;
 
@@ -36,7 +38,7 @@ public class SupplierFormController {
     private AnchorPane root;
 
     @FXML
-    private TableView<SupplierTm> tblSupplier;
+    private TableView<SupplierTmDTO> tblSupplier;
 
     @FXML
     private JFXTextField txtId;
@@ -47,7 +49,8 @@ public class SupplierFormController {
     @FXML
     private JFXTextField txtTel;
 
-    private List<Supplier> supplierList = new ArrayList<>();
+    private List<SupplierDTO> supplierList = new ArrayList<>();
+    SupplierBO supplierBO = (SupplierBO) BOFactory.getBoFactory().getBO(BOFactory.BOType.SUPPLIER);
 
     public void initialize() {
         this.supplierList = getAllSuppliers();
@@ -62,10 +65,10 @@ public class SupplierFormController {
     }
 
     private void loadSupplierTable() {
-        ObservableList<SupplierTm> tmList = FXCollections.observableArrayList();
+        ObservableList<SupplierTmDTO> tmList = FXCollections.observableArrayList();
 
-        for (Supplier supplier : supplierList) {
-            SupplierTm supplierTm = new SupplierTm(
+        for (SupplierDTO supplier : supplierList) {
+            SupplierTmDTO supplierTm = new SupplierTmDTO(
                     supplier.getSupId(),
                     supplier.getName(),
                     supplier.getTel()
@@ -76,11 +79,11 @@ public class SupplierFormController {
         tblSupplier.setItems(tmList);
     }
 
-    private List<Supplier> getAllSuppliers() {
-        List<Supplier> supplierList = null;
+    private List<SupplierDTO> getAllSuppliers() {
+        List<SupplierDTO> supplierList = null;
         try {
-            supplierList = SupplierRepo.getAll();
-        } catch (SQLException e) {
+            supplierList = supplierBO.getAll();
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         return supplierList;
@@ -102,11 +105,11 @@ public class SupplierFormController {
         String id = txtId.getText();
 
         try {
-            boolean isDeleted = SupplierRepo.delete(id);
+            boolean isDeleted = supplierBO.delete(id);
             if (isDeleted) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Supplier Deleted!").show();
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
         }
         clearFields();
@@ -120,14 +123,14 @@ public class SupplierFormController {
             String name = txtName.getText();
             String tel = txtTel.getText();
 
-            Supplier supplier = new Supplier(id, name, tel);
+            SupplierDTO supplier = new SupplierDTO(id, name, tel);
 
             try {
-                boolean isSaved = SupplierRepo.save(supplier);
+                boolean isSaved = supplierBO.save(supplier);
                 if (isSaved) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Supplier Saved!").show();
                 }
-            } catch (SQLException e) {
+            } catch (SQLException | ClassNotFoundException e) {
                 new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
             }
             initialize();
@@ -141,14 +144,14 @@ public class SupplierFormController {
             String name = txtName.getText();
             String tel = txtTel.getText();
 
-            Supplier supplier = new Supplier(id, name, tel);
+            SupplierDTO supplier = new SupplierDTO(id, name, tel);
 
             try {
-                boolean isUpdated = SupplierRepo.update(supplier);
+                boolean isUpdated = supplierBO.update(supplier);
                 if (isUpdated) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Supplier Updated!").show();
                 }
-            } catch (SQLException e) {
+            } catch (SQLException | ClassNotFoundException e) {
                 new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
             }
             initialize();
@@ -160,14 +163,14 @@ public class SupplierFormController {
         String id = txtId.getText();
 
         try {
-            Supplier supplier = SupplierRepo.searchById(id);
+            SupplierDTO supplier = supplierBO.searchById(id);
 
             if (supplier != null) {
                 txtTel.setText(supplier.getTel());
                 txtName.setText(supplier.getName());
                 txtId.setText(supplier.getSupId());
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
         }
     }
